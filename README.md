@@ -1,76 +1,81 @@
-CustomERC20 Token Contract
-This project contains a simple ERC20 token contract built using OpenZeppelin's ERC20 implementation. The contract is named CustomERC20, with a token named Aniket Token (AT), and has an initial supply minted to the contract owner.
 
-Table of Contents
-Overview
-Features
-Prerequisites
-Deployment
-Functions
-License
-Overview
-The CustomERC20 contract is an implementation of the ERC20 token standard. This contract allows the owner to mint new tokens, users to burn their tokens, and anyone to transfer tokens. The token has 3 decimal places, and the contract owner is assigned the initial token supply.
+# CustomERC20 Token Contract
 
-Token details:
+This project implements a custom ERC20 token using Solidity. The token is based on OpenZeppelin's ERC20 standard, with a few modifications for ownership, minting, and burning.
 
-Name: Aniket Token
-Symbol: AT
-Decimals: 3
-Features
-Minting: The contract owner can mint new tokens to any address.
-Burning: Any user can burn their tokens.
-Transfer: Tokens can be transferred between accounts using standard ERC20 functionality.
-Initial Supply: Upon deployment, 100 AT tokens (with 3 decimals) are minted and assigned to the contract owner.
-Prerequisites
-To work with the CustomERC20 contract, you will need:
+## Features
 
-Solidity compiler: Version ^0.8.0 or later.
-OpenZeppelin Contracts: The ERC20 token contract from the OpenZeppelin library is used in this project.
-Node.js and npm for using tools like Hardhat or Truffle to deploy and test the contract.
-MetaMask or other Ethereum wallets to interact with the contract on a testnet or mainnet.
-Deployment
-Follow these steps to deploy the contract using Hardhat:
+- **Owner-Restricted Minting:** Only the contract owner can mint new tokens.
+- **Token Burning:** Any user can burn their own tokens.
+- **Custom Token Decimals:** The token has 3 decimal places instead of the standard 18.
+- **Explicit Token Transfer:** The contract includes a function to send tokens from one address to another.
 
-Clone the repository and navigate to the project directory.
+## Token Details
 
-Install dependencies:
+- **Token Name:** Aniket
+- **Symbol:** AT
+- **Initial Supply:** 100.000 AT (minted to the owner)
+- **Decimals:** 3 (1000 units represent 1 AT)
 
-bash
-Copy code
-npm install
-Compile the contract:
+## Functions
 
-bash
-Copy code
-npx hardhat compile
-Deploy the contract to a local or test network (e.g., Rinkeby):
+### `constructor()`
+Sets the token name to "Aniket" and symbol to "AT". It mints 100 tokens (with 3 decimals) to the contract owner.
 
-bash
-Copy code
-npx hardhat run scripts/deploy.js --network rinkeby
-After deployment, the contract will mint 100 tokens to the contract owner's address.
+### `decimals()`
+Overrides the default `decimals()` function to return 3, meaning that the token has 3 decimal places.
 
-Functions
-constructor()
-Purpose: Initializes the token with the name "Aniket" and symbol "AT". It also mints 100 tokens (with 3 decimals) to the contract owner.
-decimals()
-Visibility: public, pure
-Purpose: Returns the number of decimals for the token. The token has 3 decimals.
-create(address recipient_owner, uint256 amount)
-Visibility: external
-Modifiers: onlyOwner
-Purpose: Allows the contract owner to mint new tokens to a specified address.
-Parameters:
-recipient_owner: The address that will receive the minted tokens.
-amount: The amount of tokens to be minted.
-destroy(uint256 amount)
-Visibility: external
-Purpose: Allows any user to burn a specified amount of tokens from their own balance.
-Parameters:
-amount: The amount of tokens to be burned.
-sendTokens(address recipient, uint256 amount)
-Visibility: external
-Purpose: A wrapper for the ERC20 transfer function. Sends tokens from the caller to the specified recipient.
-Parameters:
-recipient: The address that will receive the tokens.
-amount: The number of tokens to be sent.
+### `create(address recipient_owner, uint256 amount) external onlyOwner`
+Allows the contract owner to mint new tokens. The `amount` will be minted to the `recipient_owner` address.
+
+### `destroy(uint256 amount) external`
+Allows any user to burn tokens from their own account. The `amount` specifies the number of tokens to burn.
+
+### `sendTokens(address recipient, uint256 amount) external returns (bool)`
+Transfers tokens from the caller to the `recipient` address. It returns a boolean indicating whether the transfer was successful.
+
+## Usage
+
+1. **Deploy the Contract:**
+   Use a tool like Remix, Hardhat, or Truffle to deploy the contract to an Ethereum-based network.
+
+2. **Mint Tokens (Owner Only):**
+   The contract owner can mint new tokens using the `create` function:
+   ```solidity
+   create(address recipient_owner, uint256 amount);
+   ```
+
+3. **Burn Tokens:**
+   Any token holder can burn their tokens using the `destroy` function:
+   ```solidity
+   destroy(uint256 amount);
+   ```
+
+4. **Transfer Tokens:**
+   Users can transfer tokens to other accounts using the `sendTokens` function:
+   ```solidity
+   sendTokens(address recipient, uint256 amount);
+   ```
+
+## Prerequisites
+
+- Solidity `^0.8.0`
+- OpenZeppelin Contracts
+
+
+## Deployment Example
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "./CustomERC20.sol";
+
+contract DeployCustomERC20 {
+    CustomERC20 public token;
+
+    constructor() {
+        token = new CustomERC20();
+    }
+}
+```
